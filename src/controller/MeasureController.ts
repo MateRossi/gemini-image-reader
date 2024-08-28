@@ -75,7 +75,7 @@ export const measureController = {
             };
 
             //No PDF está "leitura do mês ja realizada". Mudei para "confirmada".
-            if(measure.has_confirmed) {
+            if (measure.has_confirmed) {
                 return res.status(409).json({
                     "error_code": "CONFIRMATION_DUPLICATE",
                     "error_description": "Leitura do mês já confirmada"
@@ -91,4 +91,49 @@ export const measureController = {
             return res.status(500).json({ "error_code": "INTERNAL_SERVER_ERROR", "error_description": "Ocorreu um erro ao confirmar a medida." });
         };
     },
+
+    async getAllMeasuresByCustomerCode(req: Request, res: Response) {
+        try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    "error_code": "INVALID_TYPE",
+                    "error_description": errors.array()
+                });
+            };
+
+            const customer_code = req.params.customer_code.toString();
+            const measure_type = req.query.measure_type?.toString();
+
+            const customer = await CustomerService.findCustomerByCode(customer_code);
+
+            if (!customer) {
+                return res.status(404).json({
+                    "error_code": "CUSTOMER_NOT_FOUND",
+                    "error_description": "Cliente não encontrado"
+                });
+            };
+
+            const measures = await MeasureService.getAllMeasuresByCustomerCode(customer, measure_type);
+
+            if (measures.length === 0) {
+                return res.status(404).json({
+                    "error_code": "MEASURES_NOT_FOUND",
+                    "error_description": "Nenhuma leitura encontrada"
+                });
+            }
+
+            return res.status(200).json({
+                customer_code: customer.customer_code,
+                measures
+            });
+        } catch (error: any) {
+            console.error("Erro ao confirmar a medida", error);
+            return res.status(500).json({
+                "error_code": "INTERNAL_SERVER_ERROR",
+                "error_description": "Ocorreu um erro ao listar as medidas do cliente"
+            });
+        }
+    }
 };

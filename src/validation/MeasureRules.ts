@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 export const measureValidationRules = {
     uploadRules: [
@@ -38,4 +38,11 @@ export const measureValidationRules = {
             .notEmpty().withMessage('"confirmed_value" não pode estar vazio')
             .isInt().withMessage('"confirmed_value" deve ser um integer')
     ],
+
+    getAllMeasuresByCustomerCodeRules: [
+        query('measure_type')
+            .optional()
+            .toUpperCase()
+            .isIn(['WATER', 'GAS']).withMessage('"measure_type" deve ser "WATER" ou "GAS"')
+    ]
 };

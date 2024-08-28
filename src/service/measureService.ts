@@ -6,6 +6,25 @@ import { measureRepository } from "../repository/MeasureRepository";
 import { prompt } from "../utils/Prompts";
 
 export class MeasureService {
+    static getAllMeasuresByCustomerCode = async (customer: Customer, measure_type?: string) => {
+        let whereConditions;
+        
+        if (measure_type) {
+            whereConditions = { customer, measure_type };
+        } else {
+            whereConditions = { customer };
+        };
+        
+        try {   
+            const measures = await measureRepository.find({
+                where: whereConditions,
+            });
+            return measures;
+        } catch (error: any) {
+            throw new Error('Erro ao buscar medidas do cliente no banco')
+        }
+    }
+    
     static confirmMeasure = async (measure: Measure, confirmed_value: number) => {
         try {
             measure.measure_value = confirmed_value;

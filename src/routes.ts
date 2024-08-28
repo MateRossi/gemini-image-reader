@@ -8,6 +8,7 @@ import { customerValidationRules } from './validation/CustomerRules';
 //measures
 router.post('/upload', measureValidationRules.uploadRules, measureController.upload);
 router.patch('/confirm', measureValidationRules.confirmRules, measureController.confirm);
+router.get('/customers/:customer_code/list', measureValidationRules.getAllMeasuresByCustomerCodeRules, measureController.getAllMeasuresByCustomerCode);
 
 //customers
 router.post('/customers', customerValidationRules, customerController.createCustomer);
