@@ -5,7 +5,11 @@ import { measureValidationRules } from './validation/MeasureRules';
 import { customerController } from './controller/CustomerController';
 import { customerValidationRules } from './validation/CustomerRules';
 
-router.post('/upload', measureValidationRules, measureController.upload);
+//measures
+router.post('/upload', measureValidationRules.uploadRules, measureController.upload);
+router.patch('/confirm', measureValidationRules.confirmRules, measureController.confirm);
+
+//customers
 router.post('/customers', customerValidationRules, customerController.createCustomer);
 
 export default router;

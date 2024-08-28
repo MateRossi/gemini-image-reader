@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Customer } from "./Customer";
 
 @Entity()
+@Unique(["measure_uuid"])
 export class Measure {
     @PrimaryGeneratedColumn('uuid')
     measure_uuid!: string;
@@ -17,6 +18,9 @@ export class Measure {
 
     @Column({ type: "varchar" })
     image_url!: string;
+
+    @Column({ type: "int" })
+    measure_value!: number;
 
     @ManyToOne(() => Customer, (customer) => customer.measures)
     @JoinColumn({ name: 'customer_code' })

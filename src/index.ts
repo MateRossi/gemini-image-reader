@@ -13,7 +13,7 @@ AppDataSource.initialize().then(async () => {
 
     app.get("/", (req: Request, res: Response) => {
         return res.json({
-            status: "Success OPA",
+            status: "Servidor no ar.",
         });
     });
     
