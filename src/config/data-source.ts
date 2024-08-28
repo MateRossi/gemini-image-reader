@@ -13,10 +13,10 @@ const {
 export const AppDataSource = new DataSource ({
     type: "postgres",
     host: PG_HOST,
-    port: Number(PG_PORT),
-    username: PG_USER,
+    port: Number(PG_PORT) || 5432,
+    username: PG_USER || 'postgres',
     password: PG_PASSWORD,
-    database: PG_DATABASE,
+    database: PG_DATABASE || 'postgres',
     synchronize: true,
     logging: true,
     entities: [Customer, Measure],
