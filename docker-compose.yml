@@ -27,6 +27,7 @@ services:
       - PG_PASSWORD=123456
       - PG_DATABASE=postgres
       - PG_PORT=5432
+      - PORT=3000
     stdin_open: true
     tty: true
 
