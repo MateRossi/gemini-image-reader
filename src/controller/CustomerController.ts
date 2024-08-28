@@ -1,21 +1,22 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { customerRepository } from "../repository/CustomerRepository";
+import { CustomerService } from "../service/customerService";
 
 export const customerController = {
     async createCustomer(req: Request, res: Response) {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ "error_code": "INVALID_DATA", "error_description": errors })
-        }
-
         try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ "error_code": "INVALID_DATA", "error_description": errors })
+            }
+
             const { customer_code } = req.body
 
-            const newCustomer = await customerRepository.insert({ customer_code });
+            const newCustomer = await CustomerService.createCustomer(customer_code);
 
-            return res.status(201).json(newCustomer.identifiers[0]);
+            return res.status(201).json(newCustomer);
         } catch (error: any) {
             return res.status(400).json({ "error_code": "DATABASE_ERROR", "error_description": error })
         }

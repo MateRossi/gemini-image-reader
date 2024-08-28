@@ -12,7 +12,7 @@ if (!GEMINI_API_KEY) {
 
 const fileManager = new GoogleAIFileManager(GEMINI_API_KEY);
 
-export default async function uploadFile(base64String: string, displayName: string) {
+export default async function uploadFile(base64String: string) {
     try {
         const buffer = Buffer.from(base64String, 'base64');
 
@@ -23,8 +23,7 @@ export default async function uploadFile(base64String: string, displayName: stri
         const uploadResponse = await fileManager.uploadFile(
             tempFilePath,
             {
-                mimeType: "image/jpeg",
-                displayName: displayName,
+                mimeType: "image/jpeg"
             }
         );
 
