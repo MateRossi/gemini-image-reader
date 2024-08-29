@@ -12,7 +12,7 @@ export const measureController = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     "error_code": "INVALID_DATA",
-                    "error_description": errors.array()
+                    "error_description": errors.array()[0].msg
                 });
             };
 
@@ -39,15 +39,11 @@ export const measureController = {
                 measure_type
             );
 
-            res.status(200).json({
-                image_url: newMeasure.image_url,
-                measure_value: newMeasure.measure_value,
-                measure_uuid: newMeasure.measure_uuid
-            });
+            res.status(200).json(newMeasure);
         } catch (error: any) {
             console.error("Erro ao processar a medida", error);
-            return res.status(500).json({ "error_code": "INTERNAL_SERVER_ERROR", "error_description": "Ocorreu um erro ao processar a medida." });
-        }
+            return res.status(500).json({ "error_code": "INTERNAL_SERVER_ERROR", "error_description": error.message });
+        };
     },
 
     async confirm(req: Request, res: Response) {
@@ -57,7 +53,7 @@ export const measureController = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     "error_code": "INVALID_DATA",
-                    "error_description": errors.array()
+                    "error_description": errors.array()[0].msg
                 });
             };
 
@@ -99,7 +95,7 @@ export const measureController = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     "error_code": "INVALID_TYPE",
-                    "error_description": errors.array()
+                    "error_description": errors.array()[0].msg
                 });
             };
 

@@ -8,7 +8,7 @@ export const customerController = {
             const errors = validationResult(req);
 
             if (!errors.isEmpty()) {
-                return res.status(400).json({ "error_code": "INVALID_DATA", "error_description": errors.array() })
+                return res.status(400).json({ "error_code": "INVALID_DATA", "error_description": errors.array()[0].msg })
             }
 
             const { customer_code } = req.body

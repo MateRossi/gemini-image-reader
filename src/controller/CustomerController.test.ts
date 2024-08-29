@@ -1,32 +1,36 @@
 import request from "supertest";
-import express from "express";
+import { CustomerService } from "../service/customerService";
+import { v4 as uuidv4 } from 'uuid';
+import testApp from '../utils/testApp';
 import { customerValidationRules } from "../validation/CustomerRules";
 import { customerController } from "./CustomerController";
-import { CustomerService } from "../service/customerService";
-
-const app = express();
-app.use(express.json());
-
-app.post('/customers', customerValidationRules, customerController.createCustomer);
 
 jest.mock('../service/CustomerService');
 
-describe('CustomerController', () => {
+beforeEach(() => {
+    jest.clearAllMocks();
+});
+
+testApp.post('/customers', customerValidationRules, customerController.createCustomer);
+
+describe('createCustomer', () => {
     it('deve criar um customer e retornar o status code 201', async () => {
+        const customerCode = uuidv4();
+
         (CustomerService.createCustomer as jest.Mock).mockResolvedValue({
-            customer_code: 'b0918a62-f31b-49a9-b16b-296e39a8e66c',
+            customer_code: customerCode,
         });
 
-        const response = await request(app)
+        const response = await request(testApp)
             .post('/customers')
-            .send({ customer_code: 'b0918a62-f31b-49a9-b16b-296e39a8e66c' })
+            .send({ customer_code: customerCode })
 
         expect(response.status).toBe(201);
-        expect(response.body).toEqual({ customer_code: "b0918a62-f31b-49a9-b16b-296e39a8e66c" });
+        expect(response.body).toEqual({ customer_code: customerCode });
     });
 
     it('deve retornar o status code 400 se a validação falhar', async () => {
-        const response = await request(app)
+        const response = await request(testApp)
             .post('/customers')
             .send({});
 
@@ -35,11 +39,13 @@ describe('CustomerController', () => {
     });
 
     it('deve retornar o status code 500 se houve um erro ao salvar no banco', async () => {
+        const customerCode = uuidv4();
+
         (CustomerService.createCustomer as jest.Mock).mockRejectedValue(new Error('Erro ao criar customer'));
 
-        const response = await request(app)
+        const response = await request(testApp)
             .post('/customers')
-            .send({ customer_code: 'b0918a62-f31b-49a9-b16b-296e39a8e66c' });
+            .send({ customer_code: customerCode });
 
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error_code', 'INTERNAL_SERVER_ERROR');
