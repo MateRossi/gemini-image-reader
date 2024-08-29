@@ -42,7 +42,7 @@ describe('CustomerController', () => {
             .send({ customer_code: 'b0918a62-f31b-49a9-b16b-296e39a8e66c' });
 
         expect(response.status).toBe(500);
-        expect(response.body).toHaveProperty('error_code', 'DATABASE_ERROR');
+        expect(response.body).toHaveProperty('error_code', 'INTERNAL_SERVER_ERROR');
         expect(response.body).toHaveProperty('error_description', 'Erro ao criar customer');
     });
 });
