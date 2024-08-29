@@ -1,8 +1,35 @@
 services:
+  postgresdb:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - PG_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - PG_DATABASE=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgres
+    
   api:
+    depends_on:
+      - postgresdb
     build:
       context: .
       target: production
-
+    restart: unless-stopped
+    env_file: .env
     ports:
-      - 4000:4000
+      - 3000:3000
+    environment:
+      - PG_HOST=postgresdb
+      - PG_USER=postgres
+      - PG_PASSWORD=123456
+      - PG_DATABASE=postgres
+      - PG_PORT=5432
+      - PORT=3000
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:

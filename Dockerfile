@@ -1,6 +1,6 @@
 ARG NODE_VERSION=20.10.0
 
-FROM node:${NODE_VERSION}-alpine as development
+FROM node:${NODE_VERSION}-alpine AS development
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:${NODE_VERSION}-alpine as production
+FROM node:${NODE_VERSION}-alpine AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
