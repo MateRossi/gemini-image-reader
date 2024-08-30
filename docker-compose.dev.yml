@@ -36,5 +36,24 @@ services:
 
     command: npm run dev
 
+  test:
+    depends_on:
+      - postgresdb
+    build:
+      context: .
+      target: development
+    env_file: .env
+    environment:
+      - PG_HOST=postgresdb
+      - PG_USER=postgres
+      - PG_PASSWORD=123456
+      - PG_DATABASE=postgres
+      - PG_PORT=5432
+      - PORT=3500
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm test
+
 volumes:
   db:
