@@ -19,7 +19,10 @@ export class MeasureService {
             const measures = await measureRepository.find({
                 where: whereConditions,
             });
-            return measures;
+            return {
+                customer_code: customer.customer_code,
+                measures
+            };
         } catch (error: any) {
             throw new Error('Erro ao buscar medidas do cliente no banco')
         }

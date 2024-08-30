@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 
 export const measureValidationRules = {
     uploadRules: [
@@ -40,6 +40,11 @@ export const measureValidationRules = {
     ],
 
     getAllMeasuresByCustomerCodeRules: [
+        param('customer_code')
+            .trim()
+            .notEmpty().withMessage("'customer_code' não pode estar vazio")
+            .isUUID().withMessage("'customer_code' deve ser um UUID"),
+        
         query('measure_type')
             .optional()
             .toUpperCase()
