@@ -8,23 +8,26 @@ import { prompt } from "../utils/Prompts";
 export class MeasureService {
     static getAllMeasuresByCustomerCode = async (customer: Customer, measure_type?: string) => {
         let whereConditions;
-        
+
         if (measure_type) {
             whereConditions = { customer, measure_type };
         } else {
             whereConditions = { customer };
         };
-        
-        try {   
+
+        try {
             const measures = await measureRepository.find({
                 where: whereConditions,
             });
-            return measures;
+            return {
+                customer_code: customer.customer_code,
+                measures
+            };
         } catch (error: any) {
             throw new Error('Erro ao buscar medidas do cliente no banco')
         }
     }
-    
+
     static confirmMeasure = async (measure: Measure, confirmed_value: number) => {
         try {
             measure.measure_value = confirmed_value;
@@ -34,15 +37,15 @@ export class MeasureService {
             throw new Error('Erro ao confirmar medida no banco');
         };
     };
-    
+
     static getMeasureByUUID = async (measure_uuid: string) => {
         try {
             return await measureRepository.findOneBy({ measure_uuid });
         } catch (error: any) {
-            throw new Error("Erro ao buscar medida no banco");
+            throw new Error("Erro ao buscar medida de UUID especificado no banco");
         };
     };
-    
+
     static checkExistingMeasure = async (customer_code: string, measure_datetime: Date, measure_type: string) => {
         try {
             const month = measure_datetime.getMonth() + 1;
@@ -56,7 +59,7 @@ export class MeasureService {
                 .andWhere('measure.measure_type = :measure_type', { measure_type })
                 .getOne();
         } catch (error: any) {
-            throw new Error("Erro ao verificar a existencia de uma medida no mês no banco");
+            throw new Error("Erro ao verificar a existencia da medida de tipo e mês especificados no banco");
         };
     };
 
@@ -82,9 +85,13 @@ export class MeasureService {
                 measure_value: parseInt(result.response.text().trim(), 10)
             });
 
-            return newMeasure;
+            return {
+                image_url: newMeasure.image_url,
+                measure_value: newMeasure.measure_value,
+                measure_uuid: newMeasure.measure_uuid
+            };
         } catch (error: any) {
-            throw new Error("Ocorreu um erro ao processar o pedido")
+            throw new Error('Ocorreu um erro ao processar a medida');
         };
     };
 }

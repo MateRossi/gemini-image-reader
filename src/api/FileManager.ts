@@ -29,6 +29,7 @@ export default async function uploadFile(base64String: string) {
 
         return uploadResponse;
     } catch (error: any) {
-        throw new Error("Erro ao fazer upload de arquivo");
+        console.error('Erro ao processar o aquivo', error);
+        throw new Error("Erro ao processar o arquivo");
     }
 }

@@ -12,7 +12,7 @@ export const measureController = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     "error_code": "INVALID_DATA",
-                    "error_description": errors.array()
+                    "error_description": errors.array()[0].msg
                 });
             };
 
@@ -39,15 +39,11 @@ export const measureController = {
                 measure_type
             );
 
-            res.status(200).json({
-                image_url: newMeasure.image_url,
-                measure_value: newMeasure.measure_value,
-                measure_uuid: newMeasure.measure_uuid
-            });
+            res.status(200).json(newMeasure);
         } catch (error: any) {
             console.error("Erro ao processar a medida", error);
-            return res.status(500).json({ "error_code": "INTERNAL_SERVER_ERROR", "error_description": "Ocorreu um erro ao processar a medida." });
-        }
+            return res.status(500).json({ "error_code": "INTERNAL_SERVER_ERROR", "error_description": error.message });
+        };
     },
 
     async confirm(req: Request, res: Response) {
@@ -57,7 +53,7 @@ export const measureController = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     "error_code": "INVALID_DATA",
-                    "error_description": errors.array()
+                    "error_description": errors.array()[0].msg
                 });
             };
 
@@ -99,7 +95,7 @@ export const measureController = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     "error_code": "INVALID_TYPE",
-                    "error_description": errors.array()
+                    "error_description": errors.array()[0].msg
                 });
             };
 
@@ -115,24 +111,21 @@ export const measureController = {
                 });
             };
 
-            const measures = await MeasureService.getAllMeasuresByCustomerCode(customer, measure_type);
+            const customerMeasures = await MeasureService.getAllMeasuresByCustomerCode(customer, measure_type);
 
-            if (measures.length === 0) {
+            if (customerMeasures.measures.length === 0) {
                 return res.status(404).json({
                     "error_code": "MEASURES_NOT_FOUND",
                     "error_description": "Nenhuma leitura encontrada"
                 });
-            }
+            };
 
-            return res.status(200).json({
-                customer_code: customer.customer_code,
-                measures
-            });
+            return res.status(200).json(customerMeasures);
         } catch (error: any) {
             console.error("Erro ao confirmar a medida", error);
             return res.status(500).json({
                 "error_code": "INTERNAL_SERVER_ERROR",
-                "error_description": "Ocorreu um erro ao listar as medidas do cliente"
+                "error_description": `Ocorreu um erro ao listar as medidas do cliente. ${error.message}`
             });
         }
     }

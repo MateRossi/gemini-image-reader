@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { customerRepository } from "../repository/CustomerRepository";
 import { CustomerService } from "../service/customerService";
 
 export const customerController = {
@@ -9,7 +8,7 @@ export const customerController = {
             const errors = validationResult(req);
 
             if (!errors.isEmpty()) {
-                return res.status(400).json({ "error_code": "INVALID_DATA", "error_description": errors })
+                return res.status(400).json({ "error_code": "INVALID_DATA", "error_description": errors.array()[0].msg })
             }
 
             const { customer_code } = req.body
@@ -18,7 +17,7 @@ export const customerController = {
 
             return res.status(201).json(newCustomer);
         } catch (error: any) {
-            return res.status(400).json({ "error_code": "DATABASE_ERROR", "error_description": error })
+            return res.status(500).json({ "error_code": "INTERNAL_SERVER_ERROR", "error_description": error.message })
         }
     },
 };
